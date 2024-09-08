@@ -61,6 +61,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
             <x-input-error class="mt-2" :messages="$errors->get('program')" />
         </div>
 
+        <div>
+            <x-input-label for="units" :value="__('Units')" />
+            <x-text-input id="units" name="units" type="number" class="mt-1 block w-full" :value="old('units', $user->units)" required />
+            <x-input-error class="mt-2" :messages="$errors->get('units')" />
+        </div>
+
         <!-- Add Status field as a combo box -->
         <div>
             <x-input-label for="status" :value="__('Status')" />

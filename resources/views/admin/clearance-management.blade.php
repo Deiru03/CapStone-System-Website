@@ -43,11 +43,7 @@
                             <td class="border px-4 py-2">{{ $checklist->type }}</td>
                             <td class="border px-4 py-2">
                                 <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button>
-                                <form action="{{ route('admin.delete-clearance-checklist', $checklist->table_name) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500">Delete</button>
-                                </form>
+                                <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button>
                             </td>
                         </tr>
                         @endforeach
@@ -73,11 +69,12 @@
                 </div>
                 <div>
                     <label for="document_name" class="block text-sm font-medium text-gray-700 mb-1">Document Name:</label>
-                    <input type="text" name="document_name" id="document_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required>
+                    <input type="text" name="document_name" id="document_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required oninput="checkLength(this)">
+                    <div id="warning-message" class="text-red-500 text-sm hidden">Document name should not exceed 64 characters.</div>
                 </div>
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
-                    <textarea name="name" id="name" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out resize-none" required></textarea>
+                    <textarea name="name" id="name" rows="4" maxlength="255" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out resize-none" required></textarea>
                 </div>
                 <div>
                     <label for="units" class="block text-sm font-medium text-gray-700 mb-1">Units:</label>
@@ -93,18 +90,18 @@
     
     <!-- Edit Modal -->
     <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-6 rounded-lg shadow-lg modal-content w-3/4 flex flex-col max-h-[80vh]">
-            <h3 class="text-lg font-medium mb-4">Edit Clearance Checklist</h3>
-            <form id="editForm" action="" method="POST">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl flex flex-col max-h-[80vh]">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
+            <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
-                <div id="editChecklistContent" class="overflow-y-auto flex-grow">
+                <div id="editChecklistContent" class="space-y-4">
                     <!-- Checklist content will be loaded here -->
                 </div>
-                <div class="mt-4 flex justify-between">
-                    <button type="button" onclick="addRequirement()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Add Requirement</button>
-                    <div>
-                        <button type="button" onclick="closeEditModal()" class="mr-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Cancel</button>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Save</button>
+                <div class="mt-6 flex justify-between items-center">
+                    <button type="button" onclick="addRequirement()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">Add Requirement</button>
+                    <div class="space-x-2">
+                        <button type="button" onclick="closeEditModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition duration-150 ease-in-out">Cancel</button>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-150 ease-in-out">Save</button>
                     </div>
                 </div>
             </form>
@@ -147,6 +144,31 @@
         function removeRequirement(button) {
             button.closest('.mt-4').remove();
         }
+
+        function confirmDelete(tableName) {
+            if (confirm('Are you sure you want to delete this clearance checklist? This action cannot be undone.')) {
+                // If confirmed, submit the form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ route('admin.delete-clearance-checklist', '') }}/" + tableName;
+                form.innerHTML = `
+                    @csrf
+                    @method('DELETE')
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+    <script>
+        function checkLength(input) {
+            const warningMessage = document.getElementById('warning-message');
+            if (input.value.length > 64) {
+                warningMessage.classList.remove('hidden');
+            } else {
+                warningMessage.classList.add('hidden');
+            }
+        }
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -159,15 +181,19 @@
                 notification.classList.remove('hidden');
                 setTimeout(() => {
                     notification.classList.add('hidden');
-                }, 3000); // Change to 5000 for 5 seconds
+                }, 5000); // 5 seconds
             }
     
             if (error) {
                 document.getElementById('notification-message').innerText = error;
                 notification.classList.remove('hidden');
+                notification.classList.remove('bg-green-100', 'text-green-700');
+                notification.classList.add('bg-red-100', 'text-red-700');
                 setTimeout(() => {
                     notification.classList.add('hidden');
-                }, 3000); // Change to 5000 for 5 seconds
+                    notification.classList.remove('bg-red-100', 'text-red-700');
+                    notification.classList.add('bg-green-100', 'text-green-700');
+                }, 5000); // 5 seconds
             }
         });
     </script>

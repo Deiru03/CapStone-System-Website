@@ -108,19 +108,22 @@ class AdminController extends Controller
     public function updateUser(Request $request)
     {
         //dd($request->all()); // Debugging line
-    
+        Log::info($request->all()); // Log all request data
+
         $request->validate([
             'id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'program' => 'required|string|max:255',
-            'status' => 'required|string|in:Permanent,Part Timer,Temporary',
+            'units' => 'required|integer',
+            'status' => 'required|string|in:Permanent,Part-Timer,Temporary',
         ]);
     
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
         $user->program = $request->program;
+        $user->units = $request->units;
         $user->status = $request->status;
         $user->save();
     
@@ -136,17 +139,19 @@ class AdminController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('units', 'like', "%{$search}%")
+                  ->orWhere('program', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%");
         }
     
         // Sorting functionality
-        if ($request->has('sort')) {
-            $sort = $request->input('sort');
-            $query->orderBy('name', $sort);
-        }
-    
+        // Sorting functionality
+        $sort = $request->input('sort', 'asc'); // Default sort direction
+        $query->orderBy('id', $sort); // Default sort by ID
+
         $users = $query->get();
-    
+
         return view('admin.faculty', compact('users'));
     }
 
