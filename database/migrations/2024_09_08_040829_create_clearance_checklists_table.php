@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('clearance_checklists', function (Blueprint $table) {
             $table->id();
             $table->string('document_name'); // Ensure this line is present
+            $table->string('name');
             $table->integer('units');
             $table->string('type');
             $table->string('table_name');

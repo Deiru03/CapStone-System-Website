@@ -14,6 +14,10 @@
     </style>
     <!-- resources\views\admin\clearance-management.blade.php -->
     <div class="py-12">
+        <!--Notification-->
+        <div id="notification" class="fixed top-4 right-4 bg-green-100 text-green-700 p-6 rounded-lg shadow-lg hidden text-lg w-1/3">
+            <span id="notification-message" class="block text-center"></span>
+        </div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <h3 class="text-lg font-medium text-gray-900">Clearance Management</h3>
@@ -23,6 +27,7 @@
                         <tr>
                             <th class="py-2">ID</th>
                             <th class="py-2">Document Name</th>
+                            <th class="py-2">Description</th>
                             <th class="py-2">Units</th>
                             <th class="py-2">Type</th>
                             <th class="py-2">Action</th>
@@ -32,6 +37,7 @@
                         @foreach ($clearanceChecklists as $checklist)
                         <tr>
                             <td class="border px-4 py-2">{{ $checklist->id }}</td>
+                            <td class="border px-4 py-2">{{ $checklist->document_name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->units }}</td>
                             <td class="border px-4 py-2">{{ $checklist->type }}</td>
@@ -53,14 +59,13 @@
     
     <!-- Add Modal -->
     <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-lg shadow-lg modal-content max-w-md w-full">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Add New Clearance Checklist</h3>
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Add New Clearance Checklist</h3>
             <form id="addForm" action="{{ route('admin.add-clearance-checklist') }}" method="POST" class="space-y-6">
                 @csrf
                 <div>
-                    <label for="position_type" class="block text-sm font-medium text-gray-700 mb-1">Position/Type:</label>
-                    <select name="position_type" id="position_type" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors" required>
-                        <option value="" disabled selected>Select a position/type</option>
+                    <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Type/Position:</label>
+                    <select name="type" id="type" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required>
                         <option value="Permanent">Permanent</option>
                         <option value="Part-Timer">Part-Timer</option>
                         <option value="Temporary">Temporary</option>
@@ -68,15 +73,19 @@
                 </div>
                 <div>
                     <label for="document_name" class="block text-sm font-medium text-gray-700 mb-1">Document Name:</label>
-                    <input type="text" name="document_name" id="document_name" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors" required placeholder="Enter document name">
+                    <input type="text" name="document_name" id="document_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required>
                 </div>
                 <div>
-                    <label for="units" class="block text-sm font-medium text-gray-700 mb-1">Number of Units:</label>
-                    <input type="number" name="units" id="units" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 transition-colors" required placeholder="Enter number of units">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
+                    <textarea name="name" id="name" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out resize-none" required></textarea>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">Create</button>
+                <div>
+                    <label for="units" class="block text-sm font-medium text-gray-700 mb-1">Units:</label>
+                    <input type="number" name="units" id="units" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required>
+                </div>
+                <div class="flex justify-end space-x-4 mt-8">
+                    <button type="button" onclick="closeAddModal()" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">Create</button>
                 </div>
             </form>
         </div>
@@ -138,5 +147,28 @@
         function removeRequirement(button) {
             button.closest('.mt-4').remove();
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const notification = document.getElementById('notification');
+            const message = "{{ session('message') }}";
+            const error = "{{ session('error') }}";
+    
+            if (message) {
+                document.getElementById('notification-message').innerText = message;
+                notification.classList.remove('hidden');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 3000); // Change to 5000 for 5 seconds
+            }
+    
+            if (error) {
+                document.getElementById('notification-message').innerText = error;
+                notification.classList.remove('hidden');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 3000); // Change to 5000 for 5 seconds
+            }
+        });
     </script>
 </x-admin-layout>

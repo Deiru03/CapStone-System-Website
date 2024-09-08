@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Clearance;
 use App\Models\Requirement;
@@ -199,33 +200,43 @@ class AdminController extends Controller
 
     public function addClearanceChecklist(Request $request)
     {
+        Log::info('Request Data: ', $request->all());
+ 
         $request->validate([
             'type' => 'required|string',
             'document_name' => 'required|string',
             'units' => 'required|integer',
         ]);
-    
+        // Check for existing document name
+        $existingChecklist = DB::table('clearance_checklists')
+            ->where('document_name', $request->input('document_name'))
+            ->first();
+
+            if ($existingChecklist) {
+                return redirect()->route('admin.clearance-management')->with('error', 'A checklist with this document name already exists.');
+            }   
+ 
         $tableName = str_replace(' ', '_', strtolower($request->input('document_name')));
-    
+ 
         // Create a new table for the clearance checklist
         Schema::create($tableName, function (Blueprint $table) {
             $table->id();
             $table->string('requirement_name');
             $table->timestamps();
         });
-    
+ 
         // Insert the new clearance checklist into the clearance_checklists table
-        DB::table('clearance_checklists')->insert([
+        DB::table('clearance_checklists')->insert([            
             'document_name' => $request->input('document_name'),
+            'name' => $request->input('name'),
             'units' => $request->input('units'),
             'type' => $request->input('type'),
             'table_name' => $tableName,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    
-        // Redirect to the edit page
-        return redirect()->route('admin.edit-clearance-checklist', ['table' => $tableName]);
+ 
+        return redirect()->route('admin.clearance-management')->with('message', 'Checklist added successfully.');
     }
 
     public function editClearanceChecklist($table)

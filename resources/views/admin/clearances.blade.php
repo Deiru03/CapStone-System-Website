@@ -28,7 +28,7 @@
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Apply</button>
         </form>
     
-        <table class="min-w-full bg-white mt-4">
+        <table class="min-w-full bg-white">
             <thead>
                 <tr>
                     <th class="py-2">ID</th>
@@ -41,16 +41,16 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($users as $user)
+                @foreach ($clearances as $clearance)
                 <tr>
-                    <td class="border px-4 py-2">{{ $user->id }}</td>
-                    <td class="border px-4 py-2">{{ $user->name }}</td>
-                    <td class="border px-4 py-2">{{ $user->email }}</td>
-                    <td class="border px-4 py-2">{{ $user->program }}</td>
-                    <td class="border px-4 py-2">{{ $user->clearance->status ?? 'N/A' }}</td> <!-- Assuming 'status' is a field in the clearance table -->
-                    <td class="border px-4 py-2">{{ $user->clearance->checked_by ?? 'N/A' }}</td> <!-- Assuming 'checked_by' is a field in the clearance table -->
+                    <td class="border px-4 py-2">{{ $clearance->id }}</td>
+                    <td class="border px-4 py-2">{{ $clearance->user->name }}</td>
+                    <td class="border px-4 py-2">{{ $clearance->user->email }}</td>
+                    <td class="border px-4 py-2">{{ $clearance->user->program }}</td>
+                    <td class="border px-4 py-2">{{ $clearance->status }}</td>
+                    <td class="border px-4 py-2">{{ $clearance->checked_by }}</td>
                     <td class="border px-4 py-2">
-                        <!-- Action buttons here -->
+                        <button onclick="openModal({{ $clearance->id }})" class="text-blue-500">Edit</button>
                     </td>
                 </tr>
                 @endforeach
