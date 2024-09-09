@@ -269,6 +269,13 @@ class AdminController extends Controller
         return view('admin.partials.edit-clearance-checklist', compact('requirements', 'table'));
     }
 
+    public function viewClearanceChecklist($table)
+    {
+        $requirements = DB::table($table)->get();
+        return view('admin.partials.view-clearance-checklist', compact('requirements', 'table'));
+    }
+
+
     public function updateClearanceChecklist(Request $request, $table)
     {
         $request->validate([

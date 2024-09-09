@@ -13,17 +13,17 @@
         }
     </style>
     <!-- resources\views\admin\clearance-management.blade.php -->
-    <div class="py-12">
+
         <!--Notification-->
         <div id="notification" class="fixed top-4 right-4 bg-green-100 text-green-700 p-6 rounded-lg shadow-lg hidden text-lg w-1/3">
             <span id="notification-message" class="block text-center"></span>
         </div>
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <h3 class="text-lg font-medium text-gray-900">Clearance Management</h3>
+       
+                <h3 class="text-lg font-medium text-gray-900"></h3>
                 <button onclick="openAddModal()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Add New Clearance Checklist</button>
-                <table class="min-w-full bg-white mt-4">
-                    <thead>
+                <div class="my-8"></div>
+                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead class="bg-gray-200 text-gray-700">
                         <tr>
                             <th class="py-2">ID</th>
                             <th class="py-2">Document Name</th>
@@ -33,9 +33,9 @@
                             <th class="py-2">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="divide-y divide-gray-200"> 
                         @foreach ($clearanceChecklists as $checklist)
-                        <tr>
+                        <tr class="h-16"> <!-- Added class for height -->
                             <td class="border px-4 py-2">{{ $checklist->id }}</td>
                             <td class="border px-4 py-2">{{ $checklist->document_name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->name }}</td>
@@ -49,9 +49,8 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
+        
+   
     
     <!-- Add Modal -->
     <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
@@ -90,7 +89,7 @@
     
     <!-- Edit Modal -->
     <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl flex flex-col max-h-[80vh]">
+        <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-4xl flex flex-col max-h-[100vh]">
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
