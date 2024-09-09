@@ -15,11 +15,9 @@ use App\Models\Clearance;
 use App\Models\Requirement;
 use App\Models\ChecklistRequirement;
 
-
-
 class AdminController extends Controller
 {   
-     /**
+    /**
      * Display the admin dashboard.
      */
     public function dashboard(): View
@@ -31,7 +29,17 @@ class AdminController extends Controller
         // Get the total numbers of all Users (Admin, Faculty)
         $totalUsers = \App\Models\User::count(); // with this it counts all users in the system
 
-        return view('admindashboard', compact('totalUsers')); // Return the admin dashboard view
+        // Get the count of pending and signed clearances
+        $pendingClearances = \App\Models\Clearance::where('status', 'Pending')->count();
+        $signedClearances = \App\Models\Clearance::where('status', 'Signed')->count();
+        $totalClearances = $pendingClearances + $signedClearances;
+
+        // Get the count of faculty by position
+        $permanentFacultyCount = \App\Models\User::where('status', 'Permanent')->count();
+        $partTimeFacultyCount = \App\Models\User::where('status', 'Part-Timer')->count();
+        $temporaryFacultyCount = \App\Models\User::where('status', 'Temporary')->count();
+
+        return view('admindashboard', compact('totalUsers', 'pendingClearances', 'signedClearances', 'totalClearances', 'permanentFacultyCount', 'partTimeFacultyCount', 'temporaryFacultyCount')); // Return the admin dashboard view
     }
     /**
      * Display the clearances page.
