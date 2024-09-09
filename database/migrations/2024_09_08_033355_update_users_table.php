@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->integer('units')->after('email')->nullable();
-            $table->renameColumn('status', 'position');
         });
     }
 
@@ -18,7 +17,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('units');
-            $table->renameColumn('position', 'status');
         });
     }
 };
