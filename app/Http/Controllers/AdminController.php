@@ -43,14 +43,23 @@ class AdminController extends Controller
             ->get();
 
         $query = Clearance::query();
+        $query1 = User::query();
 
         // Search functionality
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('program', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
             });
+            $query1->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('program', 'like', "%{$search}%")
+                  ->orWhere('status', 'like', "%{$search}%")
+                  ->orWhere('id', 'like', "%{$search}%");
         }
 
         // Sorting functionality
@@ -61,7 +70,7 @@ class AdminController extends Controller
         }
 
         $clearances = $query->select('clearances.*')->get();
-
+        $users = $query1->select('users.*')->get();
         return view('admin.clearances', compact('clearances', "users"));
     }
       /**
@@ -162,18 +171,20 @@ class AdminController extends Controller
     ///////////////////////////////////////////////  Clearance Content and Controls  //////////////////////////////////////////////////////////Clearance Content and Controls
     public function updateClearance(Request $request)
     {
-        $request->validate([
-            'id' => 'required|exists:clearances,id',
-            'status' => 'required|string|in:Pending,Approved,Rejected',
-            'checked_by' => 'required|string|max:255',
-        ]);
-
-        $clearance = Clearance::find($request->id);
+        $clearance = Clearance::findOrFail($request->id);
         $clearance->status = $request->status;
         $clearance->checked_by = $request->checked_by;
         $clearance->save();
 
-        return redirect()->route('admin.clearances')->with('success', 'Clearance updated successfully.');
+        return response()->json([
+            'success' => true,
+            'clearance' => [
+                'id' => $clearance->id,
+                'status' => $clearance->status,
+                'checked_by' => $clearance->checked_by,
+                'updated_at' => $clearance->updated_at->format('M d, Y H:i'),
+            ]
+        ]);
     }
 
     public function clearanceManagement(Request $request): View
