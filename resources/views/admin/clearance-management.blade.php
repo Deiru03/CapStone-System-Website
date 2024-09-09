@@ -92,6 +92,7 @@
     <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
         <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl flex flex-col max-h-[80vh]">
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
+            <!-- Name of the document or document name -->
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
                 <div id="editChecklistContent" class="space-y-4">
