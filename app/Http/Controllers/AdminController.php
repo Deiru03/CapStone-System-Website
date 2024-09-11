@@ -271,8 +271,9 @@ class AdminController extends Controller
 
     public function viewClearanceChecklist($table)
     {
+        $checklist = DB::table('clearance_checklists')->where('table_name', $table)->first();
         $requirements = DB::table($table)->get();
-        return view('admin.partials.view-clearance-checklist', compact('requirements', 'table'));
+        return view('admin.partials.view-clearance-checklist', compact('checklist', 'requirements', 'table'));
     }
 
 
@@ -292,6 +293,11 @@ class AdminController extends Controller
                 'updated_at' => now(),
             ]);
         }
+
+        // Update the updated_at field in the clearance_checklists table
+        DB::table('clearance_checklists')->where('table_name', $table)->update([
+            'updated_at' => now(),
+        ]);
 
         return redirect()->route('admin.clearance-management')->with('message', 'Clearance checklist updated successfully.');
     }
@@ -332,4 +338,29 @@ class AdminController extends Controller
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public function sendClearanceChecklist(Request $request, $table)
+    {
+        // Validate the request
+        $request->validate([
+            'table_name' => 'required|string',
+        ]);
+
+        // Fetch the checklist data based on the table name
+        $checklist = ChecklistRequirement::table('clearance_checklists')->where('table_name', $table)->first(); // Adjust this line based on your model
+
+        if (!$checklist) {
+            return response()->json(['message' => 'Checklist not found.'], 404);
+        }
+
+        // Fetch all faculty members
+        $facultyMembers = User::where('role', 'faculty')->get(); // Adjust the role as per your setup
+
+        // Send the checklist to each faculty member
+        foreach ($facultyMembers as $faculty) {
+            // Implement your sending logic here (e.g., email, notification, etc.)
+            // Example: Mail::to($faculty->email)->send(new ChecklistSent($checklist));
+        }
+
+        return response()->json(['message' => 'Checklist sent successfully!']);
+    }
 }

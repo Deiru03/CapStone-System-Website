@@ -30,20 +30,27 @@
                             <th class="py-2">Description</th>
                             <th class="py-2">Units</th>
                             <th class="py-2">Type</th>
+                            <th class="py-2">Created At</th>
+                            <th class="py-2">Updated At</th>
                             <th class="py-2">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200"> 
                         @foreach ($clearanceChecklists as $checklist)
-                        <tr class="h-16"> <!-- Added class for height -->
+                        <tr class="h-16">
                             <td class="border px-4 py-2">{{ $checklist->id }}</td>
                             <td class="border px-4 py-2">{{ $checklist->document_name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->units }}</td>
                             <td class="border px-4 py-2">{{ $checklist->type }}</td>
+                            <td class="border px-4 py-2">{{ $checklist->created_at }}</td>
+                            <td class="border px-4 py-2">{{ $checklist->updated_at }}</td>
                             <td class="border px-4 py-2">
                                 <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button>
                                 <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button>
+                                <!-- New Send button -->
+                                <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button>
+                                <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View Requirements</button>
                             </td>
                         </tr>
                         @endforeach
@@ -92,6 +99,7 @@
         <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-4xl flex flex-col max-h-[100vh]">
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
+            <h6 class="text-2xl font-bold mb-56text-gray-800"> Document Name: {{ $checklist->document_name }} </h6 >
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
                 <div id="editChecklistContent" class="space-y-4">
@@ -105,6 +113,31 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Send Modal -->
+    <div id="sendModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Send Clearance Checklist</h3>
+            <p class="mb-4">Are you sure you want to send this checklist to all faculty members?</p>
+            <div class="flex justify-end space-x-4 mt-8">
+                <button type="button" onclick="closeSendModal()" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+                <button id="confirmSendButton" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Requirements Modal -->
+    <div id="viewRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-10xl">
+            <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">View Requirements</h3>
+            <div id="requirementsContent" class="space-y-4">
+                <!-- Requirements content will be loaded here -->
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" onclick="closeViewRequirementsModal()" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400">Close</button>
+            </div>
         </div>
     </div>
     
@@ -158,6 +191,54 @@
                 document.body.appendChild(form);
                 form.submit();
             }
+        }
+
+        function openSendModal(table) {
+            document.getElementById('sendModal').classList.remove('hidden');
+            document.getElementById('confirmSendButton').onclick = function() {
+                sendChecklistToFaculty(table);
+            };
+        }
+
+        function viewRequirements(table) {
+            fetch(`/admin/view-clearance-checklist/${table}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('requirementsContent').innerHTML = html;
+                    document.getElementById('viewRequirementsModal').classList.remove('hidden');
+                });
+        }
+
+        function closeViewRequirementsModal() {
+            document.getElementById('viewRequirementsModal').classList.add('hidden');
+        }
+
+        function closeSendModal() {
+            document.getElementById('sendModal').classList.add('hidden');
+        }
+
+        function sendChecklistToFaculty(table) {
+            // Implement the logic to send the checklist to all faculty members
+            fetch(`/admin/send-clearance-checklist/${table}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ table_name: table })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Checklist sent successfully!');
+                    closeSendModal();
+                } else {
+                    alert('Failed to send checklist.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while sending the checklist.');
+            });
         }
     </script>
     <script>

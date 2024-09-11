@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Added line as per colleague's instructions
         'user_type', // Added line
         'program', // Added line as 09/02/2024
         'units', // Added line as 09/08/2024

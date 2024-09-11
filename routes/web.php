@@ -55,6 +55,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
   // Add other admin-specific routes here
 });
 
+Route::get('/admin/view-clearance-checklist/{table}', [AdminController::class, 'viewClearanceChecklist'])->name('admin.view-clearance-checklist');
 
 //////////////////////////////////////////////////////////    FACULTY    ////////////////////////////////////////////////////////////////
 
