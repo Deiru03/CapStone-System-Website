@@ -39,18 +39,18 @@
                         @foreach ($clearanceChecklists as $checklist)
                         <tr class="h-16">
                             <td class="border px-4 py-2">{{ $checklist->id }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->document_name }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->name }}</td>
+                            <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->document_name }}</td>
+                            <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->name }}</td>
                             <td class="border px-4 py-2">{{ $checklist->units }}</td>
                             <td class="border px-4 py-2">{{ $checklist->type }}</td>
                             <td class="border px-4 py-2">{{ $checklist->created_at }}</td>
                             <td class="border px-4 py-2">{{ $checklist->updated_at }}</td>
                             <td class="border px-4 py-2">
-                                <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button>
-                                <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button>
+                                <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button><br>
+                                <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button><br>
                                 <!-- New Send button -->
-                                <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button>
-                                <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View Requirements</button>
+                                <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button><br>
+                                <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View</button><br>
                             </td>
                         </tr>
                         @endforeach
@@ -60,8 +60,11 @@
    
     
     <!-- Add Modal -->
-    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl">
+    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'addModal')">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <span class="text-lg">✖</span> Close
+            </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Add New Clearance Checklist</h3>
             <form id="addForm" action="{{ route('admin.add-clearance-checklist') }}" method="POST" class="space-y-6">
                 @csrf
@@ -95,8 +98,11 @@
     </div>
     
     <!-- Edit Modal -->
-    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-4xl flex flex-col max-h-[100vh]">
+    <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'editModal')">
+        <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-4xl flex flex-col max-h-[100vh] relative" onclick="event.stopPropagation()">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <span class="text-lg">✖</span> Close
+            </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
             <h6 class="text-2xl font-bold mb-56text-gray-800"> Document Name: {{ $checklist->document_name }} </h6 >
@@ -117,8 +123,11 @@
     </div>
     
     <!-- Send Modal -->
-    <div id="sendModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl">
+    <div id="sendModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'sendModal')">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeSendModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <span class="text-lg">✖</span> Close
+            </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Send Clearance Checklist</h3>
             <p class="mb-4">Are you sure you want to send this checklist to all faculty members?</p>
             <div class="flex justify-end space-x-4 mt-8">
@@ -129,8 +138,11 @@
     </div>
 
     <!-- View Requirements Modal -->
-    <div id="viewRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-10xl">
+    <div id="viewRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'viewRequirementsModal')">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-10xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeViewRequirementsModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <span class="text-lg">✖</span> Close
+            </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">View Requirements</h3>
             <div id="requirementsContent" class="space-y-4">
                 <!-- Requirements content will be loaded here -->
