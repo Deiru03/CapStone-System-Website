@@ -105,7 +105,9 @@
             </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
-            <h6 class="text-2xl font-bold mb-56text-gray-800"> Document Name: {{ $checklist->document_name }} </h6 >
+            <h6 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
+                Document Name: {{ $checklist ? $checklist->name : 'No checklist available' }}
+            </h6>
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
                 <div id="editChecklistContent" class="space-y-4">

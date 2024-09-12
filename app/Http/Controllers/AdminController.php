@@ -200,8 +200,11 @@ class AdminController extends Controller
         // Retrieve the list of clearance checklists
         $clearanceChecklists = DB::table('clearance_checklists')->get();
     
-        // Pass the clearance checklists to the view
-        return view('admin.clearance-management', compact('clearanceChecklists'));
+        // Fetch the checklist if needed (adjust based on your logic)
+        $checklist = ChecklistRequirement::first(); // or however you want to fetch it
+    
+        // Pass the clearance checklists and checklist to the view
+        return view('admin.clearance-management', compact('clearanceChecklists', 'checklist'));
     }
       /**
      * Send checklist to faculty.
