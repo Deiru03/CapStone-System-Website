@@ -47,7 +47,7 @@
                     <td class="py-3 px-4">{{ $users->name }}</td>
                     <td class="py-3 px-4">{{ $users->email }}</td>
                     <td class="py-3 px-4">{{ $users->program }}</td>
-                    <td class="py-3 px-4">{{ $users->clearance_status }}</td>
+                    <td class="py-3 px-4 text-center">{{ $users->clearance_status }}</td>
                     <td class="py-3 px-4">{{ $users->last_updated }}</td>
                     <td class="py-3 px-4">
                         <button onclick="openModal({{ $users->id }})" class="text-blue-500 hover:text-blue-700">Edit</button>
