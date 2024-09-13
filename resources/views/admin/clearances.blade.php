@@ -36,6 +36,7 @@
                     <th class="py-3 px-4 text-left">Email</th>
                     <th class="py-3 px-4 text-left">Program</th>
                     <th class="py-3 px-4 text-center">Clearance Status</th>
+                    <th class="py-3 px-4 text-left">Checked By</th>
                     <th class="py-3 px-4 text-left">Last Updated</th>
                     <th class="py-3 px-4 text-left">Action</th>
                 </tr>
@@ -48,6 +49,7 @@
                     <td class="py-3 px-4">{{ $user->email }}</td>
                     <td class="py-3 px-4">{{ $user->program }}</td>
                     <td class="py-3 px-4 text-center">{{ $user->clearance_status }}</td>
+                    <td class="py-3 px-4">{{ $user->checked_by }}</td>
                     <td class="py-3 px-4">{{ $user->last_updated }}</td>
                     <td class="py-3 px-4">
                         <button onclick="openModal({{ $user->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">
@@ -91,7 +93,7 @@
                         </svg>
                         Clearance Status
                     </label>
-                    <select name="status" id="editStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select name="clearance_status" id="editStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                         <option value="Pending">Pending</option>
                         <option value="Signed">Signed</option>
                     </select>
@@ -104,6 +106,15 @@
                         Checked By
                     </label>
                     <input type="text" name="checked_by" id="editCheckedBy" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="editLastUpdate" class="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Last Updated
+                    </label>
+                    <input type="text" name="last_update" id="editLastUpdate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ now()->format('M d, Y H:i:s') }}" readonly>
                 </div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 flex items-center">
@@ -128,6 +139,7 @@
     
     <script>
         function openModal(id) {
+            console.log('Opening modal for user ID:', id);
             // Fetch clearance data and populate the modal fields
             const user = @json($users).find(user => user.id === id);
             document.getElementById('editId').value = user.id;
@@ -136,7 +148,7 @@
             document.getElementById('editCheckedBy').value = user.checked_by;
             document.getElementById('editModal').classList.remove('hidden');
         }
-    
+ 
         function closeModal() {
             document.getElementById('editModal').classList.add('hidden');
         }
@@ -155,10 +167,11 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log('response data:', data);
                 if (data.success) {
                     closeModal();
                     showNotification('Clearance updated successfully');
-                    updateTableRow(data.clearance);
+                    updateTableRow(data.user); // Ensure this is the correct user object
                 } else {
                     showNotification('Error updating clearance', 'error');
                 }
@@ -187,13 +200,21 @@
             }, 3000);
         }
 
-        function updateTableRow(clearance) {
-            const row = document.querySelector(`tr[data-id="${clearance.id}"]`);
+        function updateTableRow(user) {
+            const row = document.querySelector(`tr[data-id="${user.id}"]`);
+            console.log('Row:', row); // Log the row to see if it's found
+            console.log('User:', user); // Log the user object
+
             if (row) {
-                row.querySelector('.status').textContent = clearance.status;
-                row.querySelector('.checked-by').textContent = clearance.checked_by;
-                row.querySelector('.last-updated').textContent = clearance.updated_at;
+                row.querySelector('.clearance-status').textContent = user.clearance_status;
+                row.querySelector('.checked-by').textContent = user.checked_by;
+                row.querySelector('.last-updated').textContent = user.last_update;
+            } else {
+                console.error('Row not found for user ID:', user.id);
             }
         }
+    </script>
+     <script>
+      
     </script>
 </x-admin-layout>

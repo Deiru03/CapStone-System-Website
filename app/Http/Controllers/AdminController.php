@@ -48,7 +48,7 @@ class AdminController extends Controller
     {
         $users = User::with('clearance') // Assuming you have a relationship defined
             ->get();
-        $users = User::select('id', 'name', 'email', 'program', 'units', 'position', 'clearance_status', 'last_update')->get();
+        $users = User::select('id', 'name', 'email', 'program', 'units', 'position', 'clearance_status', 'last_update', 'checked_by')->get();
         {
             $query1 = User::query();
         
@@ -166,6 +166,31 @@ class AdminController extends Controller
 /////////////////////////////// Inside Contents ///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
+    public function updateFacultyClearanceUser(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:users,id',
+            'clearance_status' => 'required|string',
+            'checked_by' => 'nullable|string', // Optional if you want to track who checked it
+        ]);
+
+        $user = User::findOrFail($request->id);
+        $user->clearance_status = $request->clearance_status; // Update clearance_status
+        $user->checked_by = $request->checked_by; // Update checked_by if provided
+        $user->last_update = now(); // Update last_update to current timestamp
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'clearance_status' => $user->clearance_status,
+                'checked_by' => $user->checked_by,
+                'last_update' => $user->last_update,
+            ]
+        ]);
+    }
+
     public function updateUser(Request $request)
     {
         //dd($request->all()); // Debugging line
@@ -223,18 +248,26 @@ class AdminController extends Controller
     ///////////////////////////////////////////////  Clearance Content and Controls  //////////////////////////////////////////////////////////Clearance Content and Controls
     public function updateClearance(Request $request)
     {
-        $clearance = Clearance::findOrFail($request->id);
-        $clearance->status = $request->status;
-        $clearance->checked_by = $request->checked_by;
-        $clearance->save();
-
+        $request->validate([
+            'id' => 'required|exists:users,id',
+            'clearance_status' => 'required|string',
+            'checked_by' => 'nullable|string', // Optional if you want to track who checked it
+        ]);
+    
+        $user = User::findOrFail($request->id);
+        $user->clearance_status = $request->clearance_status; // Update clearance_status
+        $user->checked_by = $request->checked_by; // Update checked_by if provided
+        $user->last_update = now(); // Update last_update to current timestamp
+        $user->save();
+    
         return response()->json([
             'success' => true,
-            'clearance' => [
-                'id' => $clearance->id,
-                'status' => $clearance->status,
-                'checked_by' => $clearance->checked_by,
-                'updated_at' => $clearance->updated_at->format('M d, Y H:i'),
+            'user' => [
+                'id' => $user->id,
+                'clearance_status' => $user->clearance_status,
+                'checked_by' => $user->checked_by,
+                'last_update' => $user->last_update,
+                'updated_at' => $user->updated_at->format('M d, Y H:i'),
             ]
         ]);
     }

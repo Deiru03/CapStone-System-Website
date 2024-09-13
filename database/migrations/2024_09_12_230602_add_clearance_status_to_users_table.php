@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('clearance_status')->default('pending');
-            $table->string('last_update')->nullable();
+            $table->timestamp('last_update')->nullable();
             $table->string('checked_by')->nullable();
             //
         });

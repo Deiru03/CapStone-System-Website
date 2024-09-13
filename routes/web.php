@@ -36,9 +36,10 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
   // Content Controllers
   Route::get('/admin/faculty', [AdminController::class, 'manageFaculty'])->name('admin.faculty');
   Route::post('/admin/update-user', [AdminController::class, 'updateUser'])->name('admin.update-user');
-  Route::post('/admin/update-clearance', [AdminController::class, 'updateClearance'])->name('admin.update-clearance');
+  //Route::post('/admin/update-clearance', [AdminController::class, 'updateClearance'])->name('admin.update-clearance');
   // Clearances Controllers
   Route::get('/admin/clearance-management', [AdminController::class, 'clearanceManagement'])->name('admin.clearance-management');
+  Route::post('/admin/update-clearance', [AdminController::class, 'updateFacultyClearanceUser'])->name('admin.update-clearance');
   //Route::post('/admin/clearance-management/add', [AdminController::class, 'addClearanceChecklist'])->name('admin.add-clearance-checklist');
   Route::post('/admin/clearance-management/update', [AdminController::class, 'updateClearanceChecklist'])->name('admin.update-clearance-checklist');
   Route::post('/admin/clearance-management/remove', [AdminController::class, 'removeClearanceChecklist'])->name('admin.remove-clearance-checklist');
