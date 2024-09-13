@@ -186,7 +186,7 @@ class AdminController extends Controller
                 'id' => $user->id,
                 'clearance_status' => $user->clearance_status,
                 'checked_by' => $user->checked_by,
-                'last_update' => $user->last_update,
+                'last_update' => $user->last_update->format('M d, Y H:i'),
             ]
         ]);
     }

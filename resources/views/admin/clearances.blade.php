@@ -50,7 +50,9 @@
                     <td class="py-3 px-4">{{ $user->program }}</td>
                     <td class="py-3 px-4 text-center">{{ $user->clearance_status }}</td>
                     <td class="py-3 px-4">{{ $user->checked_by }}</td>
-                    <td class="py-3 px-4">{{ $user->last_updated }}</td>
+                    <td class="last-updated">
+                        {{ $user->last_update ? \Carbon\Carbon::parse($user->last_update)->format('M d, Y H:i') : 'N/A' }}
+                    </td>
                     <td class="py-3 px-4">
                         <button onclick="openModal({{ $user->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -167,18 +169,19 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('response data:', data);
+                console.log('Response data:', data); // Log the response data
                 if (data.success) {
                     closeModal();
-                    showNotification('Clearance updated successfully');
-                    updateTableRow(data.user); // Ensure this is the correct user object
+                    showNotification('Clearance updated successfully'); // Show success notification
+                    updateTableRow(data.user); // Update the table row with new data
+                    console.log('Updated user:', data.user); // Log the updated user
                 } else {
-                    showNotification('Error updating clearance', 'error');
+                    showNotification('Error updating clearance', 'error'); // Show error notification
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showNotification('An error occurred while updating the clearance', 'error');
+                console.error('Error:', error); // Log any errors
+                showNotification('An error occurred while updating the clearance', 'error'); // Show error notification
             });
         });
 
