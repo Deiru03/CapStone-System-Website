@@ -13,14 +13,14 @@ return new class extends Migration
        {
            Schema::table('users', function (Blueprint $table) {
                $table->string('program')->nullable(); // Add program column
-               $table->string('status')->nullable();  // Add status column
+               $table->string('position')->nullable();  // Add status column
            });
        }
 
        public function down()
        {
            Schema::table('users', function (Blueprint $table) {
-               $table->dropColumn(['program', 'status']);
+               $table->dropColumn(['program', 'position']); //default for the data column of status is position same din sa users
            });
        }
 };

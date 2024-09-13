@@ -30,14 +30,14 @@ class AdminController extends Controller
         $totalUsers = \App\Models\User::count(); // with this it counts all users in the system
 
         // Get the count of pending and signed clearances
-        $pendingClearances = \App\Models\Clearance::where('status', 'Pending')->count();
-        $signedClearances = \App\Models\Clearance::where('status', 'Signed')->count();
+        $pendingClearances = \App\Models\User::where('clearance_status', 'Pending')->count();
+        $signedClearances = \App\Models\User::where('clearance_status', 'Signed')->count();
         $totalClearances = $pendingClearances + $signedClearances;
 
         // Get the count of faculty by position
-        $permanentFacultyCount = \App\Models\User::where('status', 'Permanent')->count();
-        $partTimeFacultyCount = \App\Models\User::where('status', 'Part-Timer')->count();
-        $temporaryFacultyCount = \App\Models\User::where('status', 'Temporary')->count();
+        $permanentFacultyCount = \App\Models\User::where('position', 'Permanent')->count();
+        $partTimeFacultyCount = \App\Models\User::where('position', 'Part-Timer')->count();
+        $temporaryFacultyCount = \App\Models\User::where('position', 'Temporary')->count();
 
         return view('admindashboard', compact('totalUsers', 'pendingClearances', 'signedClearances', 'totalClearances', 'permanentFacultyCount', 'partTimeFacultyCount', 'temporaryFacultyCount')); // Return the admin dashboard view
     }
@@ -49,12 +49,13 @@ class AdminController extends Controller
         // Fetch users with their clearance status
         $users = User::with('clearance') // Assuming you have a relationship defined
             ->get();
+        $User = User::select('id', 'name', 'email', 'program', 'units', 'position', 'clearance_status', 'last_update')->get();
 
-        $query = Clearance::query();
+        //$query = Clearance::query();
         $query1 = User::query();
 
         // Search functionality
-        if ($request->has('search')) {
+        /*if ($request->has('search')) {
             $search = $request->input('search');
             $query->whereHas('user', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -68,18 +69,23 @@ class AdminController extends Controller
                   ->orWhere('program', 'like', "%{$search}%")
                   ->orWhere('status', 'like', "%{$search}%")
                   ->orWhere('id', 'like', "%{$search}%");
-        }
+        }*/
 
         // Sorting functionality
-        if ($request->has('sort')) {
+        /*if ($request->has('sort')) {
             $sort = $request->input('sort');
             $query->join('users', 'clearances.user_id', '=', 'users.id')
                   ->orderBy('users.name', $sort);
+        }*/
+        if ($request->has('sort')) {
+            $sort = $request->has('sort');
+            $query1 ->join('users', 'users.id', '=', 'clearances.user_id')
+                    ->orderBy('users.id', $sort);
         }
 
-        $clearances = $query->select('clearances.*')->get();
+        //$clearances = $query->select('clearances.*')->get();
         $users = $query1->select('users.*')->get();
-        return view('admin.clearances', compact('clearances', "users"));
+        return view('admin.clearances', compact('users', "users", "User"));
     }
       /**
      * Display the Submitted Reports.
@@ -133,7 +139,7 @@ class AdminController extends Controller
             'email' => 'required|email|max:255',
             'program' => 'required|string|max:255',
             'units' => 'required|integer',
-            'status' => 'required|string|in:Permanent,Part-Timer,Temporary',
+            'position' => 'required|string|in:Permanent,Part-Timer,Temporary',
         ]);
     
         $user = User::find($request->id);
@@ -141,7 +147,7 @@ class AdminController extends Controller
         $user->email = $request->email;
         $user->program = $request->program;
         $user->units = $request->units;
-        $user->status = $request->status;
+        $user->position = $request->position;
         $user->save();
     
         return redirect()->route('admin.faculty')->with('success', 'User updated successfully.');
@@ -159,7 +165,7 @@ class AdminController extends Controller
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('units', 'like', "%{$search}%")
                   ->orWhere('program', 'like', "%{$search}%")
-                  ->orWhere('status', 'like', "%{$search}%");
+                  ->orWhere('position', 'like', "%{$search}%");
         }
     
         // Sorting functionality
@@ -213,11 +219,14 @@ class AdminController extends Controller
     {
         $status = $request->input('status');
         $facultyMembers = User::where('position', $status)->get();
-
+    
         foreach ($facultyMembers as $faculty) {
             // Logic to send the checklist to the faculty member
+            $faculty->clearance_status = 'Sent'; // Update status
+            $faculty->last_updated = now(); // Update timestamp
+            $faculty->save(); // Save changes
         }
-
+    
         return redirect()->route('admin.clearance-management')->with('message', 'Checklist sent successfully.');
     }
 

@@ -35,28 +35,22 @@
                     <th class="py-3 px-4 text-left">Name</th>
                     <th class="py-3 px-4 text-left">Email</th>
                     <th class="py-3 px-4 text-left">Program</th>
-                    <th class="py-3 px-4 text-center">Clearance<br>Status</th>
-                    <th class="py-3 px-4 text-left">Checked By</th>
+                    <th class="py-3 px-4 text-center">Clearance Status</th>
                     <th class="py-3 px-4 text-left">Last Updated</th>
                     <th class="py-3 px-4 text-left">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                @foreach ($clearances as $clearance)
-                <tr class="hover:bg-gray-50" data-id="{{ $clearance->id }}">
-                    <td class="py-3 px-4">{{ $clearance->id }}</td>
-                    <td class="py-3 px-4">{{ $clearance->user->name }}</td>
-                    <td class="py-3 px-4">{{ $clearance->user->email }}</td>
-                    <td class="py-3 px-4">{{ $clearance->user->program }}</td>
-                    <td class="py-3 px-4 text-center">
-                        <span class="status px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $clearance->status == 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                            {{ $clearance->status }}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4 checked-by">{{ $clearance->checked_by }}</td>
-                    <td class="py-3 px-4 last-updated">{{ $clearance->updated_at->format('M d, Y H:i') }}</td>
+                @foreach ($User as $users)
+                <tr class="hover:bg-gray-50" data-id="{{ $users->id }}">
+                    <td class="py-3 px-4">{{ $users->id }}</td>
+                    <td class="py-3 px-4">{{ $users->name }}</td>
+                    <td class="py-3 px-4">{{ $users->email }}</td>
+                    <td class="py-3 px-4">{{ $users->program }}</td>
+                    <td class="py-3 px-4">{{ $users->clearance_status }}</td>
+                    <td class="py-3 px-4">{{ $users->last_updated }}</td>
                     <td class="py-3 px-4">
-                        <button onclick="openModal({{ $clearance->id }})" class="text-blue-500 hover:text-blue-700">Edit</button>
+                        <button onclick="openModal({{ $users->id }})" class="text-blue-500 hover:text-blue-700">Edit</button>
                     </td>
                 </tr>
                 @endforeach
@@ -130,11 +124,11 @@
     <script>
         function openModal(id) {
             // Fetch clearance data and populate the modal fields
-            const clearance = @json($clearances).find(clearance => clearance.id === id);
-            document.getElementById('editId').value = clearance.id;
-            document.getElementById('editFaculty').value = clearance.user.name; // Display faculty name
-            document.getElementById('editStatus').value = clearance.status;
-            document.getElementById('editCheckedBy').value = clearance.checked_by;
+            const users = @json($User).find(users => users.id === id);
+            document.getElementById('editId').value = users.id;
+            document.getElementById('editFaculty').value = users.name; // Display faculty name
+            document.getElementById('editStatus').value = users.clearance_status;
+            document.getElementById('editCheckedBy').value = users.checked_by;
             document.getElementById('editModal').classList.remove('hidden');
         }
     

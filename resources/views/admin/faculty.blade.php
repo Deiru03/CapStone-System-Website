@@ -11,7 +11,7 @@
 
         <!-- Search and Filter Form -->
         <form method="GET" action="{{ route('admin.faculty') }}" class="mb-4 flex items-center">
-            <input type="text" name="search" placeholder="Search by name, email, program, units, or status..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
+            <input type="text" name="search" placeholder="Search by name, email, program, units, or position..." value="{{ request('search') }}" class="border rounded p-2 mr-2 w-1/2">
             <select name="sort" class="border rounded p-2 mr-2 w-40">
                 <option value="" disabled selected>Sort name</option>
                 <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A to Z</option>
@@ -44,7 +44,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->program }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->units }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $user->status }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $user->position }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <button onclick="openModal({{ $user->id }})" class="text-blue-600 hover:text-blue-900">Edit</button>
                         </td>
@@ -86,7 +86,7 @@
                     </div>
                     <div>
                         <label for="editStatus" class="block text-sm font-medium text-gray-700">Status/Position</label>
-                        <select name="status" id="editStatus" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                        <select name="position" id="editStatus" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
                             <option value="Permanent">Permanent</option>
                             <option value="Part-Timer">Part-Timer</option>
                             <option value="Temporary">Temporary</option>
@@ -111,7 +111,7 @@
                 document.getElementById('editName').value = user.name;
                 document.getElementById('editEmail').value = user.email;
                 document.getElementById('editProgram').value = user.program;
-                document.getElementById('editStatus').value = user.status;
+                document.getElementById('editStatus').value = user.position;
                 document.getElementById('editUnits').value = user.units;
                 document.getElementById('editModal').classList.remove('hidden');
             } else {

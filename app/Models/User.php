@@ -24,7 +24,10 @@ class User extends Authenticatable
         'user_type', // Added line
         'program', // Added line as 09/02/2024
         'units', // Added line as 09/08/2024
-        'status', // Added line as 09/02/2024
+        'position', // Added line as 09/02/2024 //Status yan actually
+        'clearance_status', // This column was added 09/13/2024
+        'last_update', // This column was added 09/13/2024
+        'checked_by', // This column was added 09/13/2024
     ];
 
     /**
