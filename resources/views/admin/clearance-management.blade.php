@@ -25,6 +25,13 @@
             max-height: 400px; /* Adjust as needed */
             overflow-y: auto; /* Enable vertical scrolling */
         }
+           /* Add sticky header styles for the modal */
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background-color: white; /* Adjust as needed */
+            z-index: 20; /* Ensure it stays above other content */
+        }
     </style>
     <!-- resources\views\admin\clearance-management.blade.php -->
 
@@ -39,43 +46,53 @@
             </button>
         </div>
             
-        <div class="table-container overflow-x-auto">
+        <div class="table-container overflow-x-auto" style="max-height: 490px;">
             <table class="min-w-full bg-white shadow-md rounded-lg">
                 <thead class="bg-gray-200 text-gray-700">
                     <tr class="sticky-header">
-                        <th class="py-2">ID</th>
-                        <th class="py-2">Document Name</th>
-                        <th class="py-2">Description</th>
-                        <th class="py-2">Units</th>
-                        <th class="py-2">Type</th>
-                        <th class="py-2">Created At</th>
-                        <th class="py-2">Updated At</th>
-                        <th class="py-2">Action</th>
+                        <th class="py-3">ID</th>
+                        <th class="py-3">Document Name</th>
+                        <th class="py-3">Description</th>
+                        <th class="py-3">Units</th>
+                        <th class="py-3">Type</th>
+                        <th class="py-3">Created At</th>
+                        <th class="py-3">Updated At</th>
+                        <th class="py-3">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200"> 
                     @foreach ($clearanceChecklists as $checklist)
-                    <tr class="h-16">
-                        <td class="border px-4 py-2">{{ $checklist->id }}</td>
-                        <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->document_name }}</td>
-                        <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->name }}</td>
-                        <td class="border px-4 py-2">{{ $checklist->units }}</td>
-                        <td class="border px-4 py-2">{{ $checklist->type }}</td>
-                        <td class="border px-4 py-2">{{ $checklist->created_at }}</td>
-                        <td class="border px-4 py-2">{{ $checklist->updated_at }}</td>
+                    <tr class="h-20">
+                        <td class="border px-4 py-2 text-sm">{{ $checklist->id }}</td>
+                        <td class="border px-4 py-2 text-sm cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->document_name }}</td>
+                        <td class="border px-4 py-2 text-sm cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->name }}</td>
+                        <td class="border px-4 py-2 text-sm">{{ $checklist->units }}</td>
+                        <td class="border px-4 py-2 text-sm">{{ $checklist->type }}</td>
+                        <td class="border px-4 py-2 text-sm">{{ $checklist->created_at }}</td>
+                        <td class="border px-4 py-2 text-sm">{{ $checklist->updated_at }}</td>
                         <td class="border px-4 py-2">
-                            <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button><br>
-                            <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button><br>
-                            <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button><br>
-                            <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View</button><br>
+                            <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500 flex items-center text-sm mr-2">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Edit
+                            </button>
+                            <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500 flex items-center text-sm mr-2">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Delete
+                            </button>
+                            <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600 flex items-center text-sm mr-2">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                                Send
+                            </button>
+                            <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500 flex items-center text-sm">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                View
+                            </button>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        
-   
     
     <!-- Add Modal -->
     <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden backdrop-blur-sm animate-fadeIn" style="z-index: 1050;" onclick="closeModal(event, 'addModal')">
@@ -124,7 +141,7 @@
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
             <h6 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-                <strong>Document Description:</strong> {{ $checklist ? $checklist->name : 'No checklist available' }}
+            <!--    <strong>Document Description:</strong> { $checklist ? $checklist->name : 'No checklist available' }} -->
             </h6>
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
@@ -159,12 +176,15 @@
 
     <!-- View Requirements Modal -->
     <div id="viewRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'viewRequirementsModal')">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-7xl relative" onclick="event.stopPropagation()">
-            <button onclick="closeViewRequirementsModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-                <span class="text-lg">✖</span> Close
-            </button>
-            <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">View Requirements</h3>
-            <div id="requirementsContent" class="space-y-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-8xl relative" onclick="event.stopPropagation()">
+            <div class="modal-header sticky top-0 bg-white z-30 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-gray-800">View Requirements</h3>
+                <button onclick="closeViewRequirementsModal()" class="text-gray-500 hover:text-gray-700">
+                    <span class="text-lg">✖</span> Close
+                </button>
+            </div>
+            <hr class="border-t border-gray-300 my-4">
+            <div id="requirementsContent" class="space-y-4 overflow-y-auto max-h-[50vh]">
                 <!-- Requirements content will be loaded here -->
             </div>
             <div class="mt-6 flex justify-end">
