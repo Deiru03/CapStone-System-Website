@@ -41,16 +41,16 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                @foreach ($User as $users)
-                <tr class="hover:bg-gray-50" data-id="{{ $users->id }}">
-                    <td class="py-3 px-4">{{ $users->id }}</td>
-                    <td class="py-3 px-4">{{ $users->name }}</td>
-                    <td class="py-3 px-4">{{ $users->email }}</td>
-                    <td class="py-3 px-4">{{ $users->program }}</td>
-                    <td class="py-3 px-4 text-center">{{ $users->clearance_status }}</td>
-                    <td class="py-3 px-4">{{ $users->last_updated }}</td>
+                @foreach ($users as $user)
+                <tr class="hover:bg-gray-50" data-id="{{ $user->id }}">
+                    <td class="py-3 px-4">{{ $user->id }}</td>
+                    <td class="py-3 px-4">{{ $user->name }}</td>
+                    <td class="py-3 px-4">{{ $user->email }}</td>
+                    <td class="py-3 px-4">{{ $user->program }}</td>
+                    <td class="py-3 px-4 text-center">{{ $user->clearance_status }}</td>
+                    <td class="py-3 px-4">{{ $user->last_updated }}</td>
                     <td class="py-3 px-4">
-                        <button onclick="openModal({{ $users->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">
+                        <button onclick="openModal({{ $user->id }})" class="text-blue-500 hover:text-blue-700 flex items-center">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
@@ -129,11 +129,11 @@
     <script>
         function openModal(id) {
             // Fetch clearance data and populate the modal fields
-            const users = @json($User).find(users => users.id === id);
-            document.getElementById('editId').value = users.id;
-            document.getElementById('editFaculty').value = users.name; // Display faculty name
-            document.getElementById('editStatus').value = users.clearance_status;
-            document.getElementById('editCheckedBy').value = users.checked_by;
+            const user = @json($users).find(user => user.id === id);
+            document.getElementById('editId').value = user.id;
+            document.getElementById('editFaculty').value = user.name; // Display faculty name
+            document.getElementById('editStatus').value = user.clearance_status;
+            document.getElementById('editCheckedBy').value = user.checked_by;
             document.getElementById('editModal').classList.remove('hidden');
         }
     

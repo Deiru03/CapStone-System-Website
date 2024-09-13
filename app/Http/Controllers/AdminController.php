@@ -46,6 +46,35 @@ class AdminController extends Controller
      */
     public function clearances(Request $request): View
     {
+        $users = User::with('clearance') // Assuming you have a relationship defined
+            ->get();
+        $users = User::select('id', 'name', 'email', 'program', 'units', 'position', 'clearance_status', 'last_update')->get();
+        {
+            $query1 = User::query();
+        
+            if ($request->has('search')) {
+                $search = $request->input('search');
+                $query1->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('program', 'like', "%{$search}%")
+                        ->orWhere('position', 'like', "%{$search}%")
+                        ->orWhere('clearance_status', 'like', "%{$search}%")
+                        ->orWhere('id', 'like', "%{$search}%");
+            }
+        
+            if ($request->has('sort')) {
+                $sort = $request->input('sort');
+                $query1->orderBy('id', $sort);
+            }
+        
+            $users = $query1->get(); // Fetch users based on the query
+        
+            return view('admin.clearances', compact('users')); // Pass only the $users variable
+        }
+    }
+
+        ////////////////////// OLD ClEARANCE //////////////////////
+    /*{
         // Fetch users with their clearance status
         $users = User::with('clearance') // Assuming you have a relationship defined
             ->get();
@@ -76,7 +105,16 @@ class AdminController extends Controller
             $sort = $request->input('sort');
             $query->join('users', 'clearances.user_id', '=', 'users.id')
                   ->orderBy('users.name', $sort);
-        }*/
+        }*
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query1->where('name', 'like', "%{$search}%")
+                   ->orWhere('email', 'like', "%{$search}%")
+                   ->orWhere('program', 'like', "%{$search}%")
+                   ->orWhere('position', 'like', "%{$search}%")
+                   ->orWhere('clearance_status', 'like', "%{$search}%")
+                   ->orWhere('id', 'like', "%{$search}%");
+        }
         if ($request->has('sort')) {
             $sort = $request->has('sort');
             $query1 ->join('users', 'users.id', '=', 'clearances.user_id')
@@ -86,7 +124,7 @@ class AdminController extends Controller
         //$clearances = $query->select('clearances.*')->get();
         $users = $query1->select('users.*')->get();
         return view('admin.clearances', compact('users', "users", "User"));
-    }
+    } */
       /**
      * Display the Submitted Reports.
      */
