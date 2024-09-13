@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             //$table->string('document_name'); // Ensure this line is present
             $table->string('name');
-            $table->integer('units');
+            $table->integer('units')->nullable();
             $table->string('type');
             $table->string('table_name');
             $table->timestamps();

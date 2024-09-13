@@ -241,7 +241,7 @@ class AdminController extends Controller
         $request->validate([
             'type' => 'required|string',
             'document_name' => 'required|string',
-            'units' => 'required|integer',
+            'units' => 'nullable|integer',
         ]);
         // Check for existing document name
         $existingChecklist = DB::table('clearance_checklists')

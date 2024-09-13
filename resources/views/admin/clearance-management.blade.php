@@ -11,6 +11,20 @@
             max-height: 80vh; /* Adjust the height as needed */
             overflow-y: auto;
         }
+
+        /* Sticky header styles */
+        .sticky-header {
+        position: sticky;
+        top: 0;
+        background-color: rgb(228, 250, 255); /* Background color to cover content below */
+        z-index: 10; /* Ensure it stays above other content */
+        }
+
+        /* Ensure the table has a defined height */
+        .table-container {
+            max-height: 400px; /* Adjust as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
     </style>
     <!-- resources\views\admin\clearance-management.blade.php -->
 
@@ -18,50 +32,54 @@
         <div id="notification" class="fixed top-4 right-4 bg-green-100 text-green-700 p-6 rounded-lg shadow-lg hidden text-lg w-1/3">
             <span id="notification-message" class="block text-center"></span>
         </div>
-       
-                <h3 class="text-lg font-medium text-gray-900"></h3>
-                <button onclick="openAddModal()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Add New Clearance Checklist</button>
-                <div class="my-8"></div>
-                <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                    <thead class="bg-gray-200 text-gray-700">
-                        <tr>
-                            <th class="py-2">ID</th>
-                            <th class="py-2">Document Name</th>
-                            <th class="py-2">Description</th>
-                            <th class="py-2">Units</th>
-                            <th class="py-2">Type</th>
-                            <th class="py-2">Created At</th>
-                            <th class="py-2">Updated At</th>
-                            <th class="py-2">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200"> 
-                        @foreach ($clearanceChecklists as $checklist)
-                        <tr class="h-16">
-                            <td class="border px-4 py-2">{{ $checklist->id }}</td>
-                            <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->document_name }}</td>
-                            <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->name }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->units }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->type }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->created_at }}</td>
-                            <td class="border px-4 py-2">{{ $checklist->updated_at }}</td>
-                            <td class="border px-4 py-2">
-                                <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button><br>
-                                <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button><br>
-                                <!-- New Send button -->
-                                <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button><br>
-                                <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View</button><br>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-bold text-gray-900 border-b-2 border-blue-500 pb-2 inline-block">Faculty Checklist</h3>
+            <button onclick="openAddModal()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">
+                Add New Clearance Checklist
+            </button>
+        </div>
+            
+        <div class="table-container overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg">
+                <thead class="bg-gray-200 text-gray-700">
+                    <tr class="sticky-header">
+                        <th class="py-2">ID</th>
+                        <th class="py-2">Document Name</th>
+                        <th class="py-2">Description</th>
+                        <th class="py-2">Units</th>
+                        <th class="py-2">Type</th>
+                        <th class="py-2">Created At</th>
+                        <th class="py-2">Updated At</th>
+                        <th class="py-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200"> 
+                    @foreach ($clearanceChecklists as $checklist)
+                    <tr class="h-16">
+                        <td class="border px-4 py-2">{{ $checklist->id }}</td>
+                        <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->document_name }}</td>
+                        <td class="border px-4 py-2 cursor-pointer" onclick="viewRequirements('{{ $checklist->table_name }}')">{{ $checklist->name }}</td>
+                        <td class="border px-4 py-2">{{ $checklist->units }}</td>
+                        <td class="border px-4 py-2">{{ $checklist->type }}</td>
+                        <td class="border px-4 py-2">{{ $checklist->created_at }}</td>
+                        <td class="border px-4 py-2">{{ $checklist->updated_at }}</td>
+                        <td class="border px-4 py-2">
+                            <button onclick="openEditModal('{{ $checklist->table_name }}')" class="text-blue-500">Edit</button><br>
+                            <button onclick="confirmDelete('{{ $checklist->table_name }}')" class="text-red-500">Delete</button><br>
+                            <button onclick="openSendModal('{{ $checklist->table_name }}')" class="text-green-600">Send</button><br>
+                            <button onclick="viewRequirements('{{ $checklist->table_name }}')" class="text-black-500">View</button><br>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         
    
     
     <!-- Add Modal -->
-    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'addModal')">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl relative" onclick="event.stopPropagation()">
+    <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden backdrop-blur-sm animate-fadeIn" style="z-index: 1050;" onclick="closeModal(event, 'addModal')">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl relative animate-scaleIn" onclick="event.stopPropagation()">
             <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <span class="text-lg">✖</span> Close
             </button>
@@ -78,16 +96,16 @@
                 </div>
                 <div>
                     <label for="document_name" class="block text-sm font-medium text-gray-700 mb-1">Document Name:</label>
-                    <input type="text" name="document_name" id="document_name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required oninput="checkLength(this)">
+                    <input type="text" name="document_name" id="document_name" placeholder="Enter document name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required oninput="checkLength(this)">
                     <div id="warning-message" class="text-red-500 text-sm hidden">Document name should not exceed 64 characters.</div>
                 </div>
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
-                    <textarea name="name" id="name" rows="4" maxlength="255" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out resize-none" required></textarea>
+                    <textarea name="name" id="name" rows="4" maxlength="255" placeholder="Enter description or what is this checklist for" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out resize-none" required></textarea>
                 </div>
                 <div>
                     <label for="units" class="block text-sm font-medium text-gray-700 mb-1">Units:</label>
-                    <input type="number" name="units" id="units" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out" required>
+                    <input type="number" name="units" id="units" placeholder="Enter units or leave it blank, if not applicable" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150 ease-in-out">
                 </div>
                 <div class="flex justify-end space-x-4 mt-8">
                     <button type="button" onclick="closeAddModal()" class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
@@ -99,14 +117,14 @@
     
     <!-- Edit Modal -->
     <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'editModal')">
-        <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-4xl flex flex-col max-h-[100vh] relative" onclick="event.stopPropagation()">
+        <div class="bg-white p-8 rounded-xl shadow-3xl modal-content w-11/12 max-w-6xl flex flex-col max-h-[100vh] relative" onclick="event.stopPropagation()">
             <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <span class="text-lg">✖</span> Close
             </button>
             <h3 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">Edit Clearance Checklist</h3>
             <!-- Name of the document or document name -->
             <h6 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
-                Document Name: {{ $checklist ? $checklist->name : 'No checklist available' }}
+                <strong>Document Description:</strong> {{ $checklist ? $checklist->name : 'No checklist available' }}
             </h6>
             <form id="editForm" action="" method="POST" class="flex-grow overflow-y-auto">
                 @csrf
@@ -126,7 +144,7 @@
     
     <!-- Send Modal -->
     <div id="sendModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'sendModal')">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-2xl relative" onclick="event.stopPropagation()">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-4xl relative" onclick="event.stopPropagation()">
             <button onclick="closeSendModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <span class="text-lg">✖</span> Close
             </button>
@@ -141,7 +159,7 @@
 
     <!-- View Requirements Modal -->
     <div id="viewRequirementsModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden" style="z-index: 1050;" onclick="closeModal(event, 'viewRequirementsModal')">
-        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-10xl relative" onclick="event.stopPropagation()">
+        <div class="bg-white p-8 rounded-xl shadow-2xl modal-content w-11/12 max-w-7xl relative" onclick="event.stopPropagation()">
             <button onclick="closeViewRequirementsModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <span class="text-lg">✖</span> Close
             </button>
