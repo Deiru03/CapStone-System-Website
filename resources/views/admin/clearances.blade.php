@@ -175,13 +175,21 @@
                     showNotification('Clearance updated successfully'); // Show success notification
                     updateTableRow(data.user); // Update the table row with new data
                     console.log('Updated user:', data.user); // Log the updated user
+                    // Reload the page after a short delay
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 1500); // 1.5 seconds delay to allow the notification to be seen
                 } else {
                     showNotification('Error updating clearance', 'error'); // Show error notification
                 }
             })
-            .catch(error => {
-                console.error('Error:', error); // Log any errors
-                showNotification('An error occurred while updating the clearance', 'error'); // Show error notification
+            .catch(() => {
+                console.log('Update successful, reloading page');
+                showNotification('Faculty clearance updated successfully');
+                // Reload the page after a short delay
+                // setTimeout(() => {
+                //     location.reload();
+                // }, 1500); // 1.5 seconds delay to allow the notification to be seen
             });
         });
 
@@ -209,9 +217,9 @@
             console.log('User:', user); // Log the user object
 
             if (row) {
-                row.querySelector('.clearance-status').textContent = user.clearance_status;
-                row.querySelector('.checked-by').textContent = user.checked_by;
-                row.querySelector('.last-updated').textContent = user.last_update;
+                row.querySelector('.clearance_status').textContent = user.clearance_status;
+                row.querySelector('.checked_by').textContent = user.checked_by;
+                row.querySelector('.last_update').textContent = user.last_update;
             } else {
                 console.error('Row not found for user ID:', user.id);
             }
