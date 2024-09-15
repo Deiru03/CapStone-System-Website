@@ -69,13 +69,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 
         <!-- Add Status field as a combo box -->
         <div>
-            <x-input-label for="status" :value="__('Status')" />
-            <select id="status" name="status" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
-                <option value="Permanent" {{ old('status', $user->status) == 'Permanent' ? 'selected' : '' }}>Permanent</option>
-                <option value="Part-Timer" {{ old('status', $user->status) == 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
-                <option value="Temporary" {{ old('status', $user->status) == 'Temporary' ? 'selected' : '' }}>Temporary</option>
+            <x-input-label for="position" :value="__('Position')" />
+            <select id="position" name="position" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                <option value="Permanent" {{ old('position', $user->position) == 'Permanent' ? 'selected' : '' }}>Permanent</option>
+                <option value="Part-Timer" {{ old('position', $user->position) == 'Part-Timer' ? 'selected' : '' }}>Part-Timer</option>
+                <option value="Temporary" {{ old('position', $user->position) == 'Temporary' ? 'selected' : '' }}>Temporary</option>
             </select>
-            <x-input-error class="mt-2" :messages="$errors->get('status')" />
+            <x-input-error class="mt-2" :messages="$errors->get('position')" />
         </div>
 
 

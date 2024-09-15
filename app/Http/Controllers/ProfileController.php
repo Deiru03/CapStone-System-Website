@@ -39,7 +39,7 @@ class ProfileController extends Controller
     // Update program and status
     $request->user()->program = $request->input('program');
     $request->user()->units = $request->input('units');
-    $request->user()->status = $request->input('status');
+    $request->user()->position = $request->input('position');
 
     $request->user()->save();
 
